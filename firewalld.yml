@@ -2,6 +2,7 @@
 - hosts: docker
   remote_user: root
   tasks:
+  # Firewall rules for Dockjer Swarm using firewalld module on Centos
   - name: Firewall Rules 1
     firewalld: port=2376-2377/tcp permanent=true state=enabled
   - name: Firewall Rules 2
