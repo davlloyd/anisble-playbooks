@@ -1,0 +1,37 @@
+- name: Docker host prep
+  hosts: docker
+  sudo: true
+  tasks:
+  # Install Docker anisble dependencies
+  - name : Install docker-py module
+    pip:
+      name: docker-py
+  - name : Install docker compose module
+    pip:
+      name: docker-compose
+  # Firewall rules for Dockjer Swarm using ufw module on ubuntu
+  - name: Rule to allow for docker daemon to be accessible
+    ufw:
+      rule: allow
+      port: 2375:2377
+      proto: tcp
+  - name: Rule for Swarm
+    ufw:
+      rule: allow
+      port: 7946
+      proto: any
+  - name: 2rd rule for Swarm
+    ufw:
+      rule: allow
+      port: 4789
+      proto: udp
+    
+  # Firewall rules for Dockjer Swarm using firewalld module on centos
+  #- name: Firewall Rules 1
+  #  firewalld: port=2375-2377/tcp permanent=true state=enabled
+  #- name: Firewall Rules 2
+  #  firewalld: port=7946/tcp permanent=true state=enabled
+  #- name: Firewall Rules 3
+  #  firewalld: port=7946/udp permanent=true state=enabled
+  #- name: Firewall Rules 4
+  #  firewalld: port=4789/udp permanent=true state=enabled

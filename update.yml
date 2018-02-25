@@ -1,0 +1,30 @@
+- name: Update all packages to the latest version
+  sudo: true
+  hosts: all
+  tasks:
+  - name: "Working around Ansible apt quirks..."
+    apt:
+      pkg: "{{ item }}"
+      state: latest
+      update_cache: yes
+      cache_valid_time: 3600
+    with_items:
+      - aptitude
+
+  - name: "Upgrade existing packages"
+    apt: 
+      autoremove: yes
+      update_cache: yes 
+      upgrade: yes 
+      autoclean: yes
+
+  - name: Install pip if not present
+    apt:
+      name: python-pip
+      state: present
+
+  - name: Reboot system if required
+    command: shutdown -r now 'Rebooting to complete system upgrade'
+             removes=/var/run/reboot-required
+             
+# sudo apt-mark auto '^linux-.*-4*'

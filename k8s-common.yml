@@ -1,0 +1,4 @@
+- name: Kubernetes common actions 
+  sudo: true
+  hosts: k8s
+  tasks:
