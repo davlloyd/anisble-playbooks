@@ -1,0 +1,10 @@
+
+- include: security.yml
+- include: update.yml
+- include: docker.yml
+- include: k8s-common.yml
+- include: cleanup.yml
+
+
+
+

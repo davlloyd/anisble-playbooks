@@ -26,12 +26,4 @@
       port: 4789
       proto: udp
     
-  # Firewall rules for Dockjer Swarm using firewalld module on centos
-  #- name: Firewall Rules 1
-  #  firewalld: port=2375-2377/tcp permanent=true state=enabled
-  #- name: Firewall Rules 2
-  #  firewalld: port=7946/tcp permanent=true state=enabled
-  #- name: Firewall Rules 3
-  #  firewalld: port=7946/udp permanent=true state=enabled
-  #- name: Firewall Rules 4
-  #  firewalld: port=4789/udp permanent=true state=enabled
+ 
