@@ -1,8 +1,22 @@
 - name: Kubernetes common actions 
   sudo: true
   hosts: k8s
+
+  handlers:
+  - name: restart_docker
+    service:
+      name: docker
+      daemon_reload: yes
+      state: restarted
+
+  - name: restart_kubelet
+    service:
+      name: kubelet
+      daemon_reload: yes
+      state: restarted
+
   tasks:
-  - name: Setup Kubernetes pre-requisites 
+  - name: Setup Kubernetes pre-requisites
     apt:
       name: "{{ packages }}"
       state: present
@@ -21,6 +35,7 @@
       state: present
 
   - name: Add apt repository for stable version
+    register: result
     apt_repository:
       repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
       state: present
@@ -35,8 +50,6 @@
       - docker-ce 
       - docker-ce-cli 
       - containerd.io
-      notify:
-      - docker status
 
   - name: Add local user to docker group
     user:
@@ -56,6 +69,12 @@
     command: swapoff -a
     when: ansible_swaptotal_mb > 0
 
+  - name: Create Docker config directory
+    register: result
+    file:
+      path: /etc/systemd/system/docker.service.d
+      state: directory
+
   - name: Create docker config file
     copy:
       dest: /etc/docker/daemon.json
@@ -68,18 +87,8 @@
           },
           "storage-driver": "overlay2"
         }
-
-  - name: Create Docker config directory
-    file:
-      path: /etc/systemd/system/docker.service.d
-      state: directory
-
-  - name: restart docker service
-    systemd:
-      state: restarted
-      daemon_reload: yes
-      name: docker
-
+    notify: 
+      - restart_docker
 
   - name: Add an apt signing key for Kubernetes
     apt_key:
@@ -102,9 +111,6 @@
         - kubelet 
         - kubeadm 
         - kubectl
+    notify:
+      - restart_kubelet
 
-  - name: Restart kubelet
-    service:
-      name: kubelet
-      daemon_reload: yes
-      state: restarted
